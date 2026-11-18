@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المستخدمين | لوحة تحكم Code X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+    <div id="admin-header"></div>
+
+    <main class="max-w-[1500px] mx-auto px-4 sm:px-6 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <aside id="admin-sidebar" class="hidden lg:block lg:col-span-3"></aside>
+            <section class="lg:col-span-9 space-y-6">
+                
+<div class="space-y-6">
+    <!-- إدارة الموظفين -->
+    <div class="bg-white rounded-3xl border border-sky-100 p-6 sm:p-8 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-100">
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-3">
+                    <i class="fa-solid fa-user-shield text-indigo-600"></i>
+                    <span>إدارة الموظفين (صلاحيات المدير)</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">إضافة وتعديل وحذف الموظفين المسؤولين عن تشغيل المنصة</p>
+            </div>
+            <button onclick="openEmployeeModal()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-l from-indigo-600 to-blue-600 text-white font-black text-xs shadow-md shadow-indigo-200">
+                <i class="fa-solid fa-user-plus ml-1.5"></i> إضافة موظف جديد
+            </button>
+        </div>
+        <div id="employees-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- إدارة المستخدمين -->
+    <div class="bg-white rounded-3xl border border-sky-100 p-6 sm:p-8 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-100">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-3">
+                    <i class="fa-solid fa-users-gear text-blue-600"></i>
+                    <span>إدارة حسابات مستخدمي المنصة</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">عرض وتتبع كافة حسابات المستخدمين والتحكم في حالتها</p>
+            </div>
+            <button onclick="openUserModal()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-l from-blue-600 to-sky-500 text-white font-black text-xs shadow-md shadow-sky-200">
+                <i class="fa-solid fa-user-plus ml-1.5"></i> إضافة مستخدم جديد
+            </button>
+        </div>
+        <div id="users-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </div>
+</div>
+
+<!-- Employee Modal -->
+<div id="employee-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-sky-100 max-w-md w-full p-6 shadow-2xl space-y-4">
+        <h3 class="text-lg font-black text-slate-900">إضافة موظف إداري جديد</h3>
+        <form onsubmit="saveEmployee(event)" class="space-y-3">
+            <input type="text" id="emp-name" required placeholder="اسم الموظف" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <input type="text" id="emp-role" required placeholder="المسمى الوظيفي (مثال: مشرف تقني)" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <input type="text" id="emp-dept" required placeholder="القسم (مثال: إدارة الفعاليات)" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="closeEmployeeModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-xs font-bold">إلغاء</button>
+                <button type="submit" class="px-6 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">حفظ الموظف</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- User Modal -->
+<div id="user-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl border border-sky-100 max-w-md w-full p-6 shadow-2xl space-y-4">
+        <h3 class="text-lg font-black text-slate-900">إضافة مستخدم جديد</h3>
+        <form onsubmit="saveUser(event)" class="space-y-3">
+            <input type="text" id="usr-name" required placeholder="الاسم الكامل" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <input type="email" id="usr-email" required placeholder="البريد الإلكتروني" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <input type="text" id="usr-title" required placeholder="المسمى الوظيفي / التخصص" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <input type="text" id="usr-whatsapp" required placeholder="رقم واتساب (مع رمز الدولة)" class="w-full px-4 py-2.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs font-medium">
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="closeUserModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-xs font-bold">إلغاء</button>
+                <button type="submit" class="px-6 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold">حفظ المستخدم</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        renderAdminShell('users');
+        
+function renderUsersAndEmployees() {
+    // Employees
+    const emps = Store.getEmployees();
+    document.getElementById('employees-list').innerHTML = emps.map(e => `
+        <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 flex items-center justify-between gap-3">
+            <div>
+                <p class="font-bold text-slate-900 text-xs sm:text-sm">${e.name}</p>
+                <p class="text-[11px] text-indigo-600 font-semibold">${e.role} • <span class="text-slate-500">${e.department}</span></p>
+            </div>
+            <button onclick="deleteEmployee('${e.id}')" class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
+
+    // Users
+    const users = Store.getUsers();
+    document.getElementById('users-list').innerHTML = users.map(u => `
+        <div class="p-4 rounded-2xl bg-sky-50/50 border border-sky-100 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-white font-bold flex items-center justify-center shrink-0 shadow-sm">
+                    ${u.avatar}
+                </div>
+                <div class="min-w-0">
+                    <p class="font-bold text-slate-900 text-xs sm:text-sm truncate">${u.name}</p>
+                    <p class="text-[11px] text-sky-600 truncate">${u.title}</p>
+                </div>
+            </div>
+            <button onclick="deleteUser('${u.id}')" class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold hover:bg-rose-100 transition shrink-0">
+                <i class="fa-solid fa-user-xmark"></i>
+            </button>
+        </div>
+    `).join('');
+}
+
+function openEmployeeModal() { document.getElementById('employee-modal').classList.remove('hidden'); }
+function closeEmployeeModal() { document.getElementById('employee-modal').classList.add('hidden'); }
+function openUserModal() { document.getElementById('user-modal').classList.remove('hidden'); }
+function closeUserModal() { document.getElementById('user-modal').classList.add('hidden'); }
+
+function saveEmployee(e) {
+    e.preventDefault();
+    const name = document.getElementById('emp-name').value.trim();
+    const role = document.getElementById('emp-role').value.trim();
+    const dept = document.getElementById('emp-dept').value.trim();
+    let emps = Store.getEmployees();
+    emps.push({ id: 'e_' + Date.now(), name, role, department: dept, status: 'نشط' });
+    Store.saveEmployees(emps);
+    closeEmployeeModal();
+    showToast('تمت إضافة الموظف بنجاح');
+    renderUsersAndEmployees();
+}
+
+function deleteEmployee(id) {
+    Store.saveEmployees(Store.getEmployees().filter(e => e.id !== id));
+    showToast('تم حذف الموظف');
+    renderUsersAndEmployees();
+}
+
+function saveUser(e) {
+    e.preventDefault();
+    const name = document.getElementById('usr-name').value.trim();
+    const email = document.getElementById('usr-email').value.trim();
+    const title = document.getElementById('usr-title').value.trim();
+    const whatsapp = document.getElementById('usr-whatsapp').value.trim();
+    const parts = name.split(' ');
+    const avatar = parts.length > 1 ? (parts[0][0] + ' ' + parts[1][0]) : name.slice(0, 2);
+
+    let users = Store.getUsers();
+    users.push({
+        id: 'u_' + Date.now(),
+        name, email, title, whatsapp, avatar,
+        password: hashPassword('123456'),
+        bio: 'مستخدم جديد منضماً لمنصة Code X.',
+        friends: []
+    });
+    Store.saveUsers(users);
+    closeUserModal();
+    showToast('تمت إضافة المستخدم بنجاح');
+    renderUsersAndEmployees();
+}
+
+function deleteUser(id) {
+    let users = Store.getUsers().filter(u => u.id !== id);
+    Store.saveUsers(users);
+    showToast('تم حذف المستخدم بنجاح');
+    renderUsersAndEmployees();
+}
+
+renderUsersAndEmployees();
+
+    </script>
+</body>
+</html>

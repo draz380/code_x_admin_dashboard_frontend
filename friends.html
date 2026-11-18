@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الصداقات والتواصل | لوحة تحكم Code X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+    <div id="admin-header"></div>
+
+    <main class="max-w-[1500px] mx-auto px-4 sm:px-6 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <aside id="admin-sidebar" class="hidden lg:block lg:col-span-3"></aside>
+            <section class="lg:col-span-9 space-y-6">
+                
+<div class="bg-white rounded-3xl border border-sky-100 p-6 sm:p-8 shadow-sm space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-100">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-3">
+                <i class="fa-solid fa-user-group text-emerald-600"></i>
+                <span>الصداقات والتواصل المباشر (واتساب)</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">إدارة شبكة العلاقات والتواصل الفوري بين أعضاء المنصة عبر بروتوكول واتساب</p>
+        </div>
+    </div>
+
+    <div id="friends-network-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+</div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        renderAdminShell('friends');
+        
+function renderFriendsNetwork() {
+    const users = Store.getUsers();
+    const container = document.getElementById('friends-network-list');
+
+    container.innerHTML = users.map(u => `
+        <div class="p-5 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-4 shadow-sm">
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-white font-black flex items-center justify-center shrink-0 shadow-sm">
+                    ${u.avatar}
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-black text-slate-900 text-sm truncate">${u.name}</h3>
+                    <p class="text-xs text-sky-600 font-semibold truncate">${u.title}</p>
+                </div>
+            </div>
+            <p class="text-xs text-slate-600">${u.bio}</p>
+            <div class="flex items-center justify-between pt-3 border-t border-sky-100">
+                <span class="text-xs font-bold text-slate-500">الأصدقاء المرتبطون: ${(u.friends || []).length}</span>
+                <a href="https://wa.me/${u.whatsapp}?text=${encodeURIComponent('مرحباً ' + u.name + '، أتواصل معك عبر منصة Code X التقنية.')}"
+                   target="_blank" rel="noopener"
+                   class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> محادثة واتساب
+                </a>
+            </div>
+        </div>
+    `).join('');
+}
+
+renderFriendsNetwork();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة التعليقات | لوحة تحكم Code X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+    <div id="admin-header"></div>
+
+    <main class="max-w-[1500px] mx-auto px-4 sm:px-6 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <aside id="admin-sidebar" class="hidden lg:block lg:col-span-3"></aside>
+            <section class="lg:col-span-9 space-y-6">
+                
+<div class="bg-white rounded-3xl border border-sky-100 p-6 sm:p-8 shadow-sm space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-sky-100">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-3">
+                <i class="fa-solid fa-comments text-blue-600"></i>
+                <span>إدارة ومراقبة التعليقات</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">عرض ومراجعة وحذف التعليقات المخالفة لضمان جودة المحتوى التقني</p>
+        </div>
+        <div class="px-4 py-2 rounded-2xl bg-sky-50 text-blue-700 font-bold text-xs border border-sky-200">
+            إجمالي التعليقات: <span id="comments-count">0</span>
+        </div>
+    </div>
+
+    <div id="comments-list" class="space-y-3"></div>
+</div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        renderAdminShell('comments');
+        
+function renderComments() {
+    const comments = Store.getComments();
+    const posts = Store.getPosts();
+    const users = Store.getUsers();
+    document.getElementById('comments-count').innerText = comments.length;
+    
+    const container = document.getElementById('comments-list');
+    if (comments.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-slate-400 font-bold text-sm">لا توجد تعليقات حالياً.</div>';
+        return;
+    }
+
+    container.innerHTML = comments.map(c => {
+        const post = posts.find(p => p.id === c.postId) || { title: 'منشور محذوف' };
+        const author = users.find(u => u.id === c.userId) || { name: 'مستخدم مجهول', avatar: 'م' };
+        return `
+        <div class="p-4 rounded-2xl bg-sky-50/50 border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:bg-sky-50">
+            <div class="flex items-start gap-3.5 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 text-white font-bold flex items-center justify-center shrink-0 shadow-sm">
+                    ${author.avatar}
+                </div>
+                <div class="min-w-0 space-y-1">
+                    <p class="text-xs font-bold text-slate-900">${author.name} <span class="text-[10px] text-sky-600 font-normal">• ${c.createdAt}</span></p>
+                    <p class="text-xs text-slate-700 font-medium">${c.text}</p>
+                    <p class="text-[11px] text-slate-400 truncate">على منشور: <span class="text-blue-600 font-bold">${post.title}</span></p>
+                </div>
+            </div>
+            <button onclick="deleteComment('${c.id}')" class="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition shrink-0 self-end sm:self-center">
+                <i class="fa-solid fa-trash ml-1"></i> حذف التعليق
+            </button>
+        </div>`;
+    }).join('');
+}
+
+function deleteComment(id) {
+    let comments = Store.getComments().filter(c => c.id !== id);
+    Store.saveComments(comments);
+    showToast('تم حذف التعليق بنجاح');
+    renderComments();
+}
+
+renderComments();
+
+    </script>
+</body>
+</html>
